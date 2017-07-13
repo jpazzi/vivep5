@@ -35,7 +35,6 @@ public class PGraphicsTest extends PApplet {
 	float rotx, roty;
 
 	public void setup() {
-		smooth();
 		//position = new PVector(0, 1200, 0); // 1200 mm from floor.
 		//cam = new PeasyCam(this, 100);
 		vive = new Vive(this);

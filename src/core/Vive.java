@@ -1,16 +1,12 @@
 package core;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
-import static com.jogamp.opengl.GL.GL_DEPTH_TEST;
-import static com.jogamp.opengl.GL.GL_MULTISAMPLE;
 
 import java.lang.reflect.Method;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import com.jogamp.nativewindow.util.Point;
 import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.util.GLBuffers;
 
@@ -20,13 +16,10 @@ import glutil.BufferUtils;
 import one.util.streamex.IntStreamEx;
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.core.PMatrix;
 import processing.core.PMatrix3D;
-import processing.opengl.FrameBuffer;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
-import processing.opengl.PShader;
 import vr.IVRCompositor_FnTable;
 import vr.IVRSystem;
 import vr.Texture_t;
@@ -39,6 +32,13 @@ public class Vive {
 
 	// TODO fix background ruining buffer
 	// TODO check if the render sizes are correct
+	//private Program program;
+	public int matrixUL = -1;
+//	public int name;
+//	public int myTextureJ;
+//	public int matrixJ;
+//	public int positionJ;
+//	public int texCoordJ;
 
 	private float r = 0, g = 0, b = 0;
 	private boolean VRdraw = true;
@@ -50,11 +50,12 @@ public class Vive {
 	//private GL2ES2 gl;
 	private PJOGL pgl;
 	private GL4 gl4;
+	GL2ES2 gl2;
 	private IVRCompositor_FnTable compositor;
 	private Texture_t[] eyeTexture = { new Texture_t(), new Texture_t() };
 	public Vec2i renderSize = new Vec2i();
 	private Method VRdrawMethod;
-	//private PShader barrel;
+//	private PShader scene;
 	private final float scaleFactor = 2.11f;
 	public FloatBuffer matBuffer = GLBuffers.newDirectFloatBuffer(16);
 
@@ -76,6 +77,7 @@ public class Vive {
 	public Mat4[] projection = new Mat4[VR.EVREye.Max];
 	public Mat4[] eyePos = new Mat4[VR.EVREye.Max];
 	public Mat4[] mat4DevicePose = new Mat4[VR.k_unMaxTrackedDeviceCount];
+	public Mat4[] multiplied = new Mat4[VR.EVREye.Max];
 	public PGraphics fbL;
 	public PGraphics fbR;
 	PGL gl;
@@ -85,10 +87,13 @@ public class Vive {
 		parent.frameRate(90);
 		initHeadset();
 		initCompositor();
+		//scene = parent.loadShader("src/core/scene.frag", "src/core/scene.vert");
 		setupPGraphics();
 		setupCameras();
 		VRdrawMethod = getMethodRef(parent, "VRdraw", new Class[] { int.class });
-		//barrel = parent.loadShader("barrel_frag.glsl");
+		
+		//hmd.ComputeDistortion.
+		
 		IntStreamEx.range(mat4DevicePose.length).forEach(mat -> mat4DevicePose[mat] = new Mat4());
 		fbL = parent.createGraphics(renderSize.x, renderSize.y, parent.P3D);
 		fbR = parent.createGraphics(renderSize.x, renderSize.y, parent.P3D);
@@ -116,10 +121,17 @@ public class Vive {
 		renderSize.set(width.get(0), height.get(0));
 
 		pgl = (PJOGL) parent.beginPGL();
-		//gl = pgl.gl.getGL2ES2();
-
+		//gl2 = pgl.gl.getGL2ES2();
 		BufferUtils.destroyDirectBuffer(width);
 		BufferUtils.destroyDirectBuffer(height);
+		
+//		scene.bind();
+//		positionJ = pgl.getAttribLocation(scene.glProgram, "position");
+//		texCoordJ = pgl.getAttribLocation(scene.glProgram, "texCoord");
+//		myTextureJ = pgl.getAttribLocation(scene.glProgram, "myTexture");
+//		matrixJ = pgl.getAttribLocation(scene.glProgram, "matrix");
+//		scene.unbind();
+		
 		parent.endPGL();
 		return true;
 	}
@@ -139,37 +151,48 @@ public class Vive {
 
 	public PMatrix3D castMat4(Mat4 m, Mat4 pos, Mat4 eye) {
 		PMatrix3D pm = new PMatrix3D();
-		pm.m00 = m.m00;		pm.m01 = m.m10;		pm.m02 = m.m20;		pm.m03 = (m.m30 - (eye.m30))*1000;
+		pos.inverse();
+		pm.m00 = m.m00;		pm.m01 = m.m10;		pm.m02 = m.m20;		pm.m03 = (m.m30 )*1000;
 		pm.m10 = m.m01;		pm.m11 = m.m11;		pm.m12 = m.m21;		pm.m13 = m.m31*1000;
-		pm.m20 = m.m02;		pm.m21 = m.m12;		pm.m22 = m.m22;		pm.m23 = (m.m32 - (eye.m32))*1000;
+		pm.m20 = m.m02;		pm.m21 = m.m12;		pm.m22 = m.m22;		pm.m23 = (m.m32 )*1000;
 		pm.m30 = m.m03;		pm.m31 = m.m13;		pm.m32 = m.m23;		pm.m33 = m.m33;
-		System.out.println("pos");
-		pos.print();
-		System.out.println("m");
-		m.print();
+//		System.out.println("pos");
+//		pos.print();
+//		System.out.println("m");
+//		m.print();
 		pm.preApply(1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 		pm.scale(1, -1, 1);
 		//pm.print();
 		return pm;
 	}
 	
-	public PMatrix3D castMat4Project(Mat4 m) {
+	public PMatrix3D castMat4Project(int eye, Mat4 m) {
 		PMatrix3D pm = new PMatrix3D();
-		pm.m00 = m.m00;		pm.m01 = m.m10;		pm.m02 = m.m20;		//pm.m03 = m.m30;
-		pm.m10 = m.m01;		pm.m11 = m.m11;		pm.m12 = m.m21;		//pm.m13 = m.m31;
-		pm.m20 = m.m02;		pm.m21 = m.m12;		pm.m22 = m.m22;		//pm.m23 = m.m32;
-		pm.m30 = m.m03;		pm.m31 = m.m13;		pm.m32 = m.m23;		//pm.m33 = m.m33;
-
-		//pm.preApply(1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-		//pm.scale(1, -1, 1);
-
+//		for (int i = 0; i < matBuffer.capacity(); i++) {
+//			System.out.println(matBuffer.get(i));
+//		}
+		//matBuffer = multiplied[eye].inverse().toDfb_();
+		//parent.applyMatrix(matBuffer.get(0), matBuffer.get(1),matBuffer.get(2),matBuffer.get(3), matBuffer.get(4), matBuffer.get(5), matBuffer.get(6),matBuffer.get(7), matBuffer.get(8), matBuffer.get(9), matBuffer.get(10), matBuffer.get(11), matBuffer.get(12), matBuffer.get(13), matBuffer.get(14), matBuffer.get(15));
+//		System.out.println("multiplied " + eye);
+//		multiplied[eye].print();
+//		System.out.println("hmdPose " + eye);
+//		hmdPose.print();
+//		System.out.println("hmdPose m01 " + hmdPose.m01);
+//		//PMatrix3D fa = new PMatrix3D(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33)
+		pm.m00 = m.m00;		pm.m01 = m.m10;		pm.m02 = m.m20;		pm.m03 = (m.m30 );
+		pm.m10 = m.m01;		pm.m11 = m.m11;		pm.m12 = m.m21;		pm.m13 = (m.m31);
+		pm.m20 = m.m02;		pm.m21 = m.m12;		pm.m22 = m.m22;		pm.m23 = (m.m32);
+		pm.m30 = m.m03;		pm.m31 = m.m13;		pm.m32 = m.m23;		pm.m33 = m.m33;
+		
+		pm.scale(1, -1, 1);
+		
 		return pm;
 	}
 
 	public void draw() {
 		handleInput();
 
-		calcCurrentViewProjectionMatrix(0);
+		
 		//parent.resetMatrix();
 		//parent.resetMatrix();
 		//parent.applyMatrix(castMat4(hmdPose));
@@ -199,8 +222,9 @@ public class Vive {
 		
 
 		for (int eye = 0; eye < VR.EVREye.Max; eye++) {
-
+			calcCurrentViewProjectionMatrix(eye);
 			parent.resetMatrix();
+			//parent.resetShader();
 			//parent.applyMatrix(castMat4(hmdPose));
 			//parent.applyMatrix(castMat4(eyePos[eye]));
 			
@@ -229,12 +253,47 @@ public class Vive {
 			 gl = ((PGraphicsOpenGL)parent.g).beginPGL();
 			 gl.clearColor(r, g, b, 1.0f);
 			 gl.clear(GL_COLOR_BUFFER_BIT);
-			 parent.applyMatrix(castMat4(hmdPose, mat4DevicePose[VR.k_unTrackedDeviceIndex_Hmd], eyePos[eye]));
+			 //parent.applyMatrix(castMat4Project(projection[eye]));
+//			 System.out.println("projection " + eye);
+//			 projection[eye].print();
+//			 System.out.println(matBuffer.get(3));
+//			System.out.println("mat4DevicePose[VR.k_unTrackedDeviceIndex_Hmd]");
+//			mat4DevicePose[VR.k_unTrackedDeviceIndex_Hmd].print();
+//			System.out.println("hmdpose " + eye);
+//			hmdPose.print();
+			 //////////////////////////////////////////////////////////////////////////////////////
+//			 if(parent.keyPressed | parent.key == 0){
+//				 parent.applyMatrix(castMat4(hmdPose, mat4DevicePose[VR.k_unTrackedDeviceIndex_Hmd], eyePos[eye]));
+//				 
+//			 }
+//			 else{
+//				 parent.applyMatrix(castMat4Project(eye, multiplied[eye]));
+//				 //multiplied[eye].mul(gl);
+//			 }
+			 
+			 //matBuffer = multiplied[eye].inverse().toDfb_();
+			 //gl.uniformMatrix4fv(, 1, false, matBuffer);
+			 ((PGraphicsOpenGL)parent.g).setProjection(castMat4Project(eye, vp));
+			 //((PGraphicsOpenGL)parent.g).applyMatrix(castMat4(hmdPose, mat4DevicePose[VR.k_unTrackedDeviceIndex_Hmd], eyePos[eye]));
+			 //((PGraphicsOpenGL)parent.g).projection = castMat4Project(eye, multiplied[eye]);
 			 //gl.viewport (0, 0, renderSize.x, renderSize.y);  
 			 runVRdrawMethod(eye);
 			 ((PGraphicsOpenGL)parent.g).endPGL();
-			 parent.perspective(parent.radians(110), (float)(renderSize.x * 1.0 / renderSize.y), z_near, z_far);
+			 //parent.perspective(parent.radians(110), (float)(renderSize.x * 1.0 / renderSize.y), z_near, z_far);
 			 
+//			 scene.bind();
+//			 name = scene.glProgram;
+			 //have to bind texture 2D
+//			 mytexture
+//			 gl.uniformMatrix4fv(matrixUL, 1, false, matBuffer);
+//			 matrixUL = gl.getUniformLocation(name, "matrix");
+//			 matrixUL = matBuffer;
+			
+			 //have to bind matrix - which is matbuffer to.dfb
+			 
+//			 scene.unbind();
+			 
+//			 parent.shader(scene);
 			 
 			 parent.g.endDraw();
 			 //parent.g.clear();
@@ -253,13 +312,13 @@ public class Vive {
 //				fbL.background(300);
 //				fbL.image(parent.g.copy(), renderSize.x, renderSize.y);
 //				fbL.endDraw();
-				eyeTexture[eye].set(2, VR.EGraphicsAPIConvention.API_OpenGL, VR.EColorSpace.ColorSpace_Gamma);
+				eyeTexture[eye].set(3, VR.EGraphicsAPIConvention.API_OpenGL, VR.EColorSpace.ColorSpace_Gamma);
 				compositor.Submit.apply(eye, eyeTexture[eye], null, VR.EVRSubmitFlags.Submit_Default);
 			}
 			else{
 				//runVRdrawMethod(eye);
 
-				eyeTexture[eye].set(3, VR.EGraphicsAPIConvention.API_OpenGL, VR.EColorSpace.ColorSpace_Gamma);
+				eyeTexture[eye].set(2, VR.EGraphicsAPIConvention.API_OpenGL, VR.EColorSpace.ColorSpace_Gamma);
 				compositor.Submit.apply(eye, eyeTexture[eye], null, VR.EVRSubmitFlags.Submit_Default);
 			}
 			// set shader
@@ -344,12 +403,23 @@ public class Vive {
 		}
 		if (trackedDevicePose[VR.k_unTrackedDeviceIndex_Hmd].bPoseIsValid == 1) {
 			mat4DevicePose[VR.k_unTrackedDeviceIndex_Hmd].inverse(hmdPose);
+			hmdPose.m30 *= 1000;	hmdPose.m31 *= 1000;	hmdPose.m32 *= 1000; hmdPose.m33 *=1000;
 		}
 		//mat4DevicePose[VR.k_unTrackedDeviceIndex_Hmd].print();
 	}
 
 	private void calcCurrentViewProjectionMatrix(int eye) {
-		projection[eye].mul(eyePos[eye], vp).mul(hmdPose).toDfb(matBuffer);
+		multiplied[eye] = projection[eye].mul(eyePos[eye], vp).mul(hmdPose);
+//		System.out.println("projection " + eye);
+//		projection[eye].print();
+//		System.out.println("eyePos " + eye);
+//		eyePos[eye].print();
+//		System.out.println("vp " + eye);
+//		vp.print();
+//		System.out.println("hmdpose " + eye);
+//		hmdPose.print();
+//		System.out.println("multiplied " + eye);
+//		multiplied[eye].print();
 	}
 
 	private void setupCameras() {
@@ -363,7 +433,7 @@ public class Vive {
 		if (hmd == null) {
 			return new Mat4();
 		}
-		float nearClip = 0.1f, farClip = 30.0f;
+		float nearClip = .1f, farClip = 3000.0f;
 		return new Mat4(hmd.GetProjectionMatrix.apply(eye, nearClip, farClip, VR.EGraphicsAPIConvention.API_OpenGL));
 	}
 
@@ -460,5 +530,24 @@ public class Vive {
 			break;
 		}
 	}
+	
+//	 private class Program extends glsl.Program {
+//
+//	        public int matrixUL = -1;
+//
+//	        public Program(GL4 gl4) {
+//
+//	            super(gl4, Application.SHADERS_ROOT, SHADERS_SRC);
+//
+//	            matrixUL = gl4.glGetUniformLocation(name, "matrix");
+//
+//	            gl4.glUseProgram(name);
+//	            gl4.glUniform1i(
+//	                    gl4.glGetUniformLocation(name, "myTexture"),
+//	                    Semantic.Sampler.MY_TEXTURE);
+//	            gl4.glUseProgram(0);
+//	        }
+//	    }
+	
 
 }
