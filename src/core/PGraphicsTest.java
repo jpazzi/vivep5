@@ -1,10 +1,8 @@
 package core;
 
-import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
-
 import peasy.PeasyCam;
 import processing.core.PApplet;
-import processing.core.PConstants;
+
 
 public class PGraphicsTest extends PApplet {
 
