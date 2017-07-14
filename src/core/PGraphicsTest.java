@@ -1,18 +1,10 @@
 package core;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
-import static com.jogamp.opengl.GL.GL_DEPTH_TEST;
-
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES2;
 
 import peasy.PeasyCam;
 import processing.core.PApplet;
-import processing.core.PImage;
-import processing.core.PVector;
-import processing.opengl.PGL;
-import processing.opengl.PGraphicsOpenGL;
-import processing.opengl.PJOGL;
+import processing.core.PConstants;
 
 public class PGraphicsTest extends PApplet {
 
@@ -24,46 +16,28 @@ public class PGraphicsTest extends PApplet {
 		size(1080, 1200, P3D);
 	}
 
-	PImage imgL;
-	PImage imgR;
-	//PVector position;
 	Vive vive;
-	//private GL2ES2 gl;
-	private PJOGL pgl;
 	PeasyCam cam;
-	PGL gl;
+	boolean viveOn = true;
+
 	float rotx, roty;
 
 	public void setup() {
-		//position = new PVector(0, 1200, 0); // 1200 mm from floor.
-		//cam = new PeasyCam(this, 100);
+		cam = new PeasyCam(this, 1000);
 		vive = new Vive(this);
 	}
 
 	public void draw() {
-		//TODO TEST WITH PEASYCAM
-		//TODO REMOVE DRAW FUNCTION ALL TOGETHER
-		//background(50,50,50);
-		//box(50);
-		vive.draw();
-//		 g.beginDraw();
-//		 gl =  ((PGraphicsOpenGL)g).beginPGL();
-//		 gl.viewport (0, 0, 500, 500);  
-//		 ((PGraphicsOpenGL)g).endPGL();
-//		 perspective(PI/6f, 1f, 10, 1000);
-//		 camera(0,0,600, 0,0,0, 0,1,0);
-//		 renderGeometry();
-//		 g.endDraw();
-//		 // right viewport - back view
-//		 g.beginDraw();
-//		 gl = ((PGraphicsOpenGL)g).beginPGL();
-//		 gl.viewport(300, 0, 300, 300);  
-//		 ((PGraphicsOpenGL)g).endPGL();
-//		 perspective(PI/6f, 1f, 10, 1000);
-//		 camera(0,0,-600, 0,0,0, 0,1,0);
-//		 renderGeometry();
-//		 g.endDraw();
-		//VRdraw(0);
+		if(viveOn){
+			
+			vive.draw();
+		}
+		else{
+			vive.update();
+			fill(0);
+			sphere(50000);
+			VRdraw(0);
+		}
 	}
 
 	public void VRdraw(int eye) {
@@ -71,29 +45,9 @@ public class PGraphicsTest extends PApplet {
 		
 		// The scale is approximately real scale. The unit is a millimeter.
 		// The default eye position is on the origin (0, 0, 0) in the scene.
-		// The parameter "eye" gives LEFT or RIGHT.
 
-		
 
-		
-//		background(50);
-//		fill(255);
-//		translate(position.x, position.y, position.z);
-
-		// picture
-//		pushMatrix();
-//		//translate(0, -1500, -1800);
-//		////GARBAGE NEEDED FOR EYE TRANSLATIONS?
-//		//imageMode(CENTER);
-//		scale(3.0f);
-//		if (eye == LEFT) {
-//			image(imgL, 0, 0);
-//		} else if (eye == RIGHT) {
-//			image(imgR, 0, 0);
-//		}
-//		popMatrix();
-		// light
-		//lights();
+		lights();
 		text(frameRate,500, 500);
 		stroke(255,0,0);
 		strokeWeight(5);
@@ -152,20 +106,10 @@ public class PGraphicsTest extends PApplet {
 	}
 
 	public void keyPressed() {
-
-		// Move
-//		if (keyCode == LEFT) {
-//			position.x += 500;
-//		}
-//		if (keyCode == RIGHT) {
-//			position.x -= 500;
-//		}
-//		if (keyCode == UP) {
-//			position.z += 500;
-//		}
-//		if (keyCode == DOWN) {
-//			position.z -= 500;
-//		}
+		if(key == ' '){
+			viveOn = !viveOn;
+			print(viveOn);
+		}
 	}
 
 }
