@@ -11,160 +11,18 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/audioutils.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://toxiclibs.org/docs/audioutils/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/colorutils.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://toxiclibs.org/docs/colorutils/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/datautils.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://toxiclibs.org/docs/datautils/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/gluegen-rt.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/joal.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/simutils.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://toxiclibs.org/docs/simutils/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/toxiclibs_p5.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/toxiclibscore.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://toxiclibs.org/docs/core/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/verletphysics.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://toxiclibs.org/docs/verletphysics/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/toxi/volumeutils.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://toxiclibs.org/docs/volumeutils/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/toxi"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/controlP5.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.sojamo.com/libraries/controlP5/reference/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/peasycam.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://mrfeinberg.com/peasycam/reference/"/>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/javolution.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://javolution.org/apidocs/index.html"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/core.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://processing.github.io/processing-javadocs/core/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/gluegen-rt-natives-linux-amd64.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/gluegen-rt-natives-linux-armv6hf.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/gluegen-rt-natives-linux-i586.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/gluegen-rt-natives-macosx-universal.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/gluegen-rt-natives-windows-amd64.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/gluegen-rt-natives-windows-i586.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/gluegen-rt.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/jogl-all-natives-linux-amd64.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/jogl-all-natives-linux-armv6hf.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/jogl-all-natives-linux-i586.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/jogl-all-natives-macosx-universal.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/jogl-all-natives-windows-amd64.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/jogl-all-natives-windows-i586.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/processing/jogl-all.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/jna-4.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/glm.jar"/>
 	<classpathentry kind="lib" path="lib/streamex-0.6.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/javaUnofficialOpenglSDK.jar"/>
+	<classpathentry kind="lib" path="lib/core.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
