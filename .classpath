@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/openvr.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="POpenVR/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib/processing"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/peasycam.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://mrfeinberg.com/peasycam/reference/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ArchFrame/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jna-4.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/glm.jar"/>
-	<classpathentry kind="lib" path="lib/streamex-0.6.2-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/javaUnofficialOpenglSDK.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/core.jar"/>
+	<classpathentry kind="lib" path="lib/glm.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-linux-armv6hf.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-linux-i586.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-windows-i586.jar"/>
 	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-linux-armv6hf.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-linux-i586.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-windows-i586.jar"/>
 	<classpathentry kind="lib" path="lib/jogl-all.jar"/>
+	<classpathentry kind="lib" path="lib/openvr.jar"/>
+	<classpathentry kind="lib" path="lib/peasycam.jar"/>
+	<classpathentry kind="lib" path="lib/jna-4.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/streamex-0.6.2-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
