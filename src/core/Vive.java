@@ -11,13 +11,11 @@ import com.jogamp.opengl.util.GLBuffers;
 
 import glm.mat._4.Mat4;
 import glm.vec._2.i.Vec2i;
-import glutil.BufferUtils;
 import one.util.streamex.IntStreamEx;
 import processing.core.PApplet;
 import processing.core.PMatrix3D;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
-import processing.opengl.PJOGL;
 import vr.IVRCompositor_FnTable;
 import vr.IVRSystem;
 import vr.Texture_t;
@@ -28,17 +26,31 @@ import vr.VREvent_t;
 
 public class Vive {
 
-	// TODO hand tracking
-	// TODO controller models
 	// TODO fix background ruining buffer
 	// TODO implement modes for standing / seated
-	// TODO pass vec3d positions / orientation for HMD / controllers
-	// TODO aabb for the world? can I get world positions?
-	// TODO write debug preview that uses controller states
+	// TODO pass velocity / angular velocity for HMD / controllers
+	// TODO enclosure dimensions - as AABB?
+	// TODO load single instances of models
+	
+	/*------------------------------------------------------------------------------------------
+	 * 
+	 * This library adds vive support to processing
+	 * 
+	 * Built using a java port of OpenVR - 
+	 * The code was built with reference to, and snippets from GBarbieri's Jogl-hello-vr repo
+	 * 
+	 * 
+	 */
+
+	
+	public String steamVRPath = "D:/Program Files (x86)/Steam/steamapps/common/SteamVR";
 	
 	private int scale = 1000;
 	private float r = 0, g = 0, b = 0;
 	private boolean VRdraw = true;
+	private int eyeL = 3, eyeR = 2;
+	public ArrayList<Controller> controllers = new ArrayList<Controller>();
+	
 	public IVRSystem hmd;
 	private IntBuffer errorBuffer = GLBuffers.newDirectIntBuffer(1);
 	private PApplet parent;
@@ -47,16 +59,13 @@ public class Vive {
 	public Vec2i renderSize = new Vec2i();
 	private Method VRdrawMethod;
 	public boolean drawControllers = true;
-
 	public FloatBuffer matBuffer = GLBuffers.newDirectFloatBuffer(16);
 
 	// TRACKED POSES
 	private TrackedDevicePose_t.ByReference trackedDevicePosesReference = new TrackedDevicePose_t.ByReference();
 	public TrackedDevicePose_t[] trackedDevicePose = (TrackedDevicePose_t[]) trackedDevicePosesReference
 			.toArray(VR.k_unMaxTrackedDeviceCount);
-	public boolean[] rbShowTrackedDevice = new boolean[VR.k_unMaxTrackedDeviceCount];
 	private char[] devClassChar = new char[VR.k_unMaxTrackedDeviceCount];
-	private ArrayList<Integer> controllerID = new ArrayList<>();
 	public Mat4 hmdPose = new Mat4(), vp = new Mat4();
 	public Mat4[] projection = new Mat4[VR.EVREye.Max];
 	public Mat4[] eyePos = new Mat4[VR.EVREye.Max];
@@ -69,10 +78,8 @@ public class Vive {
 		parent.frameRate(90);
 		initHeadset();
 		initCompositor();
-		//setupPGraphics();
 		setupCameras();
 		VRdrawMethod = getMethodRef(parent, "VRdraw", null);
-		
 		IntStreamEx.range(mat4DevicePose.length).forEach(mat -> mat4DevicePose[mat] = new Mat4());
 
 	}
@@ -87,25 +94,6 @@ public class Vive {
 			String s = "Unable to init VR runtime: " + VR.VR_GetVRInitErrorAsEnglishDescription(errorBuffer.get(0));
 			throw new Error("VR_Init Failed, " + s);
 		}
-	}
-
-	private boolean setupPGraphics() {
-		if (hmd == null) {
-			return false;
-		}
-		IntBuffer width = GLBuffers.newDirectIntBuffer(1), height = GLBuffers.newDirectIntBuffer(1);
-		hmd.GetRecommendedRenderTargetSize.apply(width, height);
-
-		renderSize.set(width.get(0), height.get(0));
-		System.out.println(width.get(0));
-		System.out.println(height.get(0));
-		gl = (PJOGL) parent.beginPGL();
-		
-		BufferUtils.destroyDirectBuffer(width);
-		BufferUtils.destroyDirectBuffer(height);
-		
-		parent.endPGL();
-		return true;
 	}
 
 	private boolean initCompositor() {
@@ -131,27 +119,30 @@ public class Vive {
 		return pm;
 	}
 	
-	private PMatrix3D castMat4ProjectController(Mat4 m) {
-		PMatrix3D pm = new PMatrix3D();
-		pm.m00 = m.m00;		pm.m01 = m.m10;		pm.m02 = m.m20;		pm.m03 = m.m30 * scale;
-		pm.m10 = -m.m01;	pm.m11 = -m.m11;	pm.m12 = -m.m21;	pm.m13 = -m.m31 * scale;
-		pm.m20 = m.m02;		pm.m21 = m.m12;		pm.m22 = m.m22;		pm.m23 = m.m32 * scale;
-		return pm;
-	}
-	
 	public void setScale(int s){
 		scale = s;
 	}
+	
+	public void swapEyes(){
+		int tempEye = eyeL;
+		eyeL = eyeR;
+		eyeR = tempEye;
+	}
+	
+	public void setEye(int left, int right){
+		eyeL = left;
+		eyeR = right;
+	}
 
 	public void update(){
+		parent.g.clear();
 		handleInput();
 		updateHMDMatrixPose();
 	}
 	
 	public void draw() {
 		handleInput();
-		//parent.g.setSize(1680, 1512);
-		
+
 		for (int eye = 0; eye < VR.EVREye.Max; eye++) {
 			calcCurrentViewProjectionMatrix(eye);
 
@@ -167,20 +158,23 @@ public class Vive {
 			
 			// Draw here
 			runVRdrawMethod();
-			//draw controllers
 			
+			//draw controllers
+			for(Controller c: controllers){
+				c.draw(eye);
+			}
+			//drawControllers(eye);
 			
 			// End draw
-			
 			((PGraphicsOpenGL)parent.g).endPGL();
 			parent.g.endDraw();
 			// Send buffers to each eye
 			if(eye == 0){
-				eyeTexture[eye].set(4, VR.EGraphicsAPIConvention.API_OpenGL, VR.EColorSpace.ColorSpace_Gamma);
+				eyeTexture[eye].set(eyeL, VR.EGraphicsAPIConvention.API_OpenGL, VR.EColorSpace.ColorSpace_Gamma);
 				compositor.Submit.apply(eye, eyeTexture[eye], null, VR.EVRSubmitFlags.Submit_Default);
 			}
 			else{
-				eyeTexture[eye].set(3, VR.EGraphicsAPIConvention.API_OpenGL, VR.EColorSpace.ColorSpace_Gamma);
+				eyeTexture[eye].set(eyeR, VR.EGraphicsAPIConvention.API_OpenGL, VR.EColorSpace.ColorSpace_Gamma);
 				compositor.Submit.apply(eye, eyeTexture[eye], null, VR.EVRSubmitFlags.Submit_Default);
 			}
 		}
@@ -203,8 +197,6 @@ public class Vive {
 		}
 		compositor.WaitGetPoses.apply(trackedDevicePosesReference, VR.k_unMaxTrackedDeviceCount, null, 0);
 
-		//poseClasses = "";
-
 		for (int device = 0; device < VR.k_unMaxTrackedDeviceCount; device++) {
 
 			if (trackedDevicePose[device].bPoseIsValid == 1) {
@@ -217,7 +209,7 @@ public class Vive {
 
 					case VR.ETrackedDeviceClass.TrackedDeviceClass_Controller:
 						devClassChar[device] = 'C';
-						controllerID.add(device);
+						controllers.add(new Controller(parent, this, device, scale));
 						break;
 
 					case VR.ETrackedDeviceClass.TrackedDeviceClass_HMD:
@@ -240,7 +232,6 @@ public class Vive {
 						devClassChar[device] = '?';
 						break;
 					}
-					//poseClasses += devClassChar[device];
 				}
 			}
 		}
@@ -313,21 +304,9 @@ public class Vive {
 		}
 
 		// Process SteamVR controller state
-		for (int device = 0; device < VR.k_unMaxTrackedDeviceCount; device++) {
-
+		for (Controller c: controllers) {
 			VRControllerState_t state = new VRControllerState_t();
-			
-			if (hmd.GetControllerState.apply(device, state) != 0) {
-				System.out.println(state.rAxis[0]);
-				rbShowTrackedDevice[device] = state.ulButtonPressed == 0;
-				
-				// let's test haptic impulse too..
-				if (state.ulButtonPressed != 0) {
-					// apparently only axis ID 0 works, maximum duration value
-					// is 3999
-					hmd.TriggerHapticPulse.apply(device, 0, (short) 0);
-				}
-			}
+			c.processEvents(state);
 		}
 	}
 
@@ -337,7 +316,6 @@ public class Vive {
 			System.out.println("No event registered");
 			break;
 		case VR.EVREventType.VREvent_TrackedDeviceActivated:
-			//setupRenderModelForTrackedDevice(event.trackedDeviceIndex, hmd);
 			System.out.println("Device %u attached. Setting up render model.\n" + event.trackedDeviceIndex);
 			break;
 
@@ -350,7 +328,5 @@ public class Vive {
 			break;
 		}
 	}
-	
 
-	
 }

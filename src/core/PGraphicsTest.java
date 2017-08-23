@@ -2,8 +2,6 @@ package core;
 
 import peasy.PeasyCam;
 import processing.core.PApplet;
-import processing.core.PShape;
-import toxi.geom.mesh.WETriangleMesh;
 
 
 public class PGraphicsTest extends PApplet {
@@ -15,10 +13,9 @@ public class PGraphicsTest extends PApplet {
 	public void settings() {
 		size(1080, 1200, P3D);
 	}
-	PShape objShape;
+	
 	Vive vive;
 	PeasyCam cam;
-	WETriangleMesh mesh;
 	boolean viveOn = true;
 
 	float rotx, roty;
@@ -26,9 +23,7 @@ public class PGraphicsTest extends PApplet {
 	public void setup() {
 		cam = new PeasyCam(this, 1000);
 		vive = new Vive(this);
-		objShape = loadShape("body.obj");
-		objShape.scale(-10000);
-		objShape.rotateZ(TWO_PI/2);
+		vive.SetBackground(50, 50, 50);
 	}
 
 	public void draw() {
@@ -37,18 +32,15 @@ public class PGraphicsTest extends PApplet {
 		}
 		else{
 			vive.update();
-			fill(0);
-			stroke(0,0,0);
-			sphere(5000);
 			VRdraw();
 		}
+			//System.out.println(frameRate);
+
 	}
 
 	public void VRdraw() {
 		// The scale is approximately real scale. The unit is a millimeter.
 
-
-		//lights();
 		text(frameRate,500, 500);
 		stroke(255,0,0);
 		strokeWeight(5);
@@ -77,13 +69,7 @@ public class PGraphicsTest extends PApplet {
 		rotateY(millis() / 900.0f);
 		box(200);
 		popMatrix();
-		
-		pushMatrix();
-		translate(100, -100,-100);
-		box(50);
-		shape(objShape,0,0);
-		shape(objShape,500,500);
-		popMatrix();
+
 	}
 
 	void renderGeometry() {
