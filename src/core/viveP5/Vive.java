@@ -47,7 +47,7 @@ public class Vive {
 	// TODO enclosure dimensions - as AABB?
 	// TODO load single / more efficient instances of models
 	
-	public String steamVRPath = "D:/Program Files (x86)/Steam/steamapps/common/SteamVR";
+	public String steamVRPath = "C:/Program Files (x86)/Steam/steamapps/common/SteamVR";
 	
 	private int scale = 1000;
 	private float r = 0, g = 0, b = 0;
@@ -234,7 +234,7 @@ public class Vive {
 	 * @param green green value between 0 and 255
 	 * @param blue blue value between 0 and 255
 	 */
-	public void SetBackground(float red, float green, float blue) {
+	public void setBackground(float red, float green, float blue) {
 		r = red / 255;
 		g = green / 255;
 		b = blue / 255;

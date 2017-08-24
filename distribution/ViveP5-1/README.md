@@ -2,9 +2,7 @@
 
 ### Install with the Contribution Manager
 
-Add contributed Libraries by selecting the menu item _Sketch_ → _Import Library..._ → _Add Library..._ This will open the Contribution Manager, where you can browse for ViveP5, or any other Library you want to install.
-
-Not all available Libraries have been converted to show up in this menu. If a Library isn't there, it will need to be installed manually by following the instructions below.
+Currently this library is not available through the contribution manager
 
 ### Manual Install
 
@@ -14,7 +12,7 @@ By default the following locations are used for your sketchbook folder:
   * For Mac users, the sketchbook folder is located inside `~/Documents/Processing` 
   * For Windows users, the sketchbook folder is located inside `My Documents/Processing`
 
-Download ViveP5 from http://viveP5.jamespazzi.com
+Download ViveP5 from [BitBucket](https://bitbucket.org/jamespazzi/vivep5)
 
 Unzip and copy the contributed Library's folder into the `libraries` folder in the Processing sketchbook. You will need to create this `libraries` folder if it does not exist.
 
@@ -35,4 +33,4 @@ Some folders like `examples` or `src` might be missing. After Library ViveP5 has
 
 ### Troubleshooting
 
-If you're having trouble, have a look at the [Processing Wiki](https://github.com/processing/processing/wiki/How-to-Install-a-Contributed-Library) for more information, or contact the author [James Pazzi](http://jamespazzi.com).
+If you're having trouble, have a look at the [Processing Wiki](https://github.com/processing/processing/wiki/How-to-Install-a-Contributed-Library) for more information, or contact the author [James Pazzi](http://vivep5.jamespazzi.com).
