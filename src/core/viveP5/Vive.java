@@ -47,7 +47,7 @@ public class Vive {
 	// TODO enclosure dimensions - as AABB?
 	// TODO load single / more efficient instances of models
 	
-	public String steamVRPath = "C:/Program Files (x86)/Steam/steamapps/common/SteamVR";
+	public String steamVRPath = "D:/Program Files (x86)/Steam/steamapps/common/SteamVR";
 	
 	private int scale = 1000;
 	private float r = 0, g = 0, b = 0;
@@ -112,7 +112,8 @@ public class Vive {
 	 * Initializes Compositor (compositor sends frames to each eye)
 	 */
 	private boolean initCompositor() {
-		compositor = new IVRCompositor_FnTable(VR.VR_GetGenericInterface(VR.IVRCompositor_Version, errorBuffer));
+		//first var in GetGenericInterface changed from VR.IVRCompositor_Version to "FnTable:IVRCompositor_016"
+		compositor = new IVRCompositor_FnTable(VR.VR_GetGenericInterface("FnTable:IVRCompositor_017", errorBuffer));
 		if (compositor == null || errorBuffer.get(0) != VR.EVRInitError.VRInitError_None) {
 			System.err.println("Compositor initialization failed.");
 			return false;
