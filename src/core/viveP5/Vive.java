@@ -47,7 +47,7 @@ public class Vive {
 	// TODO enclosure dimensions - as AABB?
 	// TODO load single / more efficient instances of models
 	
-	public String steamVRPath = "D:/Program Files (x86)/Steam/steamapps/common/SteamVR";
+	public String steamVRPath = "C:/Program Files (x86)/Steam/steamapps/common/SteamVR";
 	
 	private int scale = 1000;
 	private float r = 0, g = 0, b = 0;
