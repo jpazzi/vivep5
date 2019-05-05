@@ -320,7 +320,7 @@ public class Vive {
 		return new Mat4(hmd.GetEyeToHeadTransform.apply(eye)).inverse();
 	}
 
-	// Method initialization and use fucntion for VRdraw -------------
+	// Method initialization and use function for VRdraw -------------
 
 	// Method to run draw in MainApp
 	private void runVRdrawMethod() {

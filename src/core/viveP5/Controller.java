@@ -28,8 +28,8 @@ public class Controller {
 	int id;
 	int scale;
 	boolean controllersInitialized = false;
-	PVector pos = new PVector();
-	PMatrix3D matrix = new PMatrix3D();
+	public PVector pos = new PVector();
+	public PMatrix3D matrix = new PMatrix3D();
 
 	// Meshes - its faster to load meshes separately for each controller rather
 	// than apply and reset matrices for each eye draw.
@@ -61,6 +61,14 @@ public class Controller {
 		scale = _scale;
 		parent = _parent;
 		loadControllerObj(parent.steamVRPath);
+	}
+	
+	/**
+	 * Returns Controller Transformation Matrix
+	 * @return PMatrix
+	 */
+	public PMatrix3D getControllerMatrix(){
+		return matrix;
 	}
 	
 	/**
